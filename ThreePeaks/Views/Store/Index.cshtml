@@ -1,0 +1,260 @@
+﻿@model List<ThreePeaks.Models.StoreModel>
+@{
+    ViewData["Title"] = "Store";
+}
+
+
+
+<h2>Upload Excel File</h2>
+
+<form asp-controller="Store" asp-action="Upload" enctype="multipart/form-data" method="post">
+    <div>
+        <label>Select an Excel file:</label>
+        <input type="file" name="excelFile" />
+    </div>
+    <div>
+        <button type="submit">Upload</button>
+    </div>
+</form>
+
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <div class="row pb-2">
+                <div class="col col-4">
+                    <label for="pickupStoreNo" class="form-label">Pickup Store #:</label>
+                </div>
+                <div class="col ">
+                    <select id="pickupStoreNo" class="form-select" aria-label="Select a column">
+                        <option selected>Select a colum...</option>
+                        @foreach (var product in Model)
+                        {
+                            <option value="@product.PickUpStoreNo">@product.PickUpStoreNo</option>
+                        }
+                    </select>
+                </div>
+
+            </div>
+            <div class="row pb-2">
+                <div class="col col-4"><label for="pickupStoreName" class="form-label">Pickup Name</label></div>
+                <div class="col">
+                    <select id="pickupStoreName" class="form-select" aria-label="Select a column">
+                        <option selected>Select a colum...</option>
+                        @foreach (var product in Model)
+                        {
+                            <option value="@product.PickUpStoreName">@product.PickUpStoreName</option>
+                        }
+                    </select>
+                </div>
+
+
+            </div>
+
+            <div class="row pb-2">
+                <div class="col col-4"><label for="pickupLat" class="form-label">Pickup Lat</label></div>
+                <div class="col">
+                    <select id="pickupLat" class="form-select" aria-label="Select a column">
+                        <option selected>Select a colum...</option>
+                        @foreach (var product in Model)
+                        {
+                            <option value="@product.PickupLat">@product.PickupLat</option>
+                        }
+                    </select>
+                </div>
+
+
+            </div>
+            <div class="row pb-2">
+                <div class="col col-4"> <label for="pickupLon" class="form-label">Pickup Lon</label></div>
+                <div class="col">
+                    <select id="pickupLon" class="form-select" aria-label="Select a column">
+                        <option selected>Select a colum...</option>
+                        @foreach (var product in Model)
+                        {
+                            <option value="@product.PickupLong">@product.PickupLong</option>
+                        }
+                    </select>
+                </div>
+
+
+            </div>
+            <div class="row pb-2">
+                <div class="col col-4"><label for="pickupAddress" class="form-label">Pickup Formatted Address</label></div>
+                <div class="col">
+                    <select id="pickupAddress" class="form-select" aria-label="Select a column">
+                        <option selected>Select a colum...</option>
+                        @foreach (var product in Model)
+                        {
+                            <option value="@product.PickUpAddress">@product.PickUpAddress</option>
+                        }
+                    </select>
+                </div>
+
+
+            </div>
+            <div class="row pb-2">
+                <div class="col col-4">
+                    <button id="validateBtn" class="btn btn-primary">Validate</button>
+                </div>
+            </div>
+            <div class="row pb-2">
+                <div class="col col-4">
+                    <button id="cancelBtn" class="btn btn-primary">Cancel</button>
+                </div>
+            </div>
+        </div>
+        <div class="col" >
+            <div id="viewResult">
+            <div class="row pb-2">
+                <div class="col">
+                    <label for="productSelect" class="form-label">File Validation Successful</label>
+                </div>         
+            </div>
+
+            <div class="row pb-2">
+                <div class="col col-4">
+                    <label for="productSelect" class="form-label">Valid Rows  @Model.Count()/ @Model.Count()</label>
+                </div>
+         
+
+            </div>
+
+            <div class="row pb-2">
+                <div class="col col-4">
+                    <label for="productSelect" class="form-label">Pickup Store #:</label>
+                </div>
+                <div class="col ">
+                    <p id="pickupStoreNoSelected"></p>
+                </div>
+
+            </div>
+            <div class="row pb-2">
+                <div class="col col-4"><label for="productSelect" class="form-label">Pickup Name</label></div>
+                <div class="col">
+                    <p id="pickupStoreNameSelected"></p>
+                </div>
+
+
+            </div>
+
+            <div class="row pb-2">
+                <div class="col col-4"><label for="productSelect" class="form-label">Pickup Lat</label></div>
+                <div class="col">
+                    <p id="pickupLatSelected"></p>
+                </div>
+
+            </div>
+            <div class="row pb-2">
+                <div class="col col-4"> <label for="productSelect" class="form-label">Pickup Lon</label></div>
+                <div class="col">
+                    <p id="pickupLonSelected"></p>
+                </div>
+
+
+            </div>
+            <div class="row pb-2">
+                <div class="col col-4"><label for="productSelect" class="form-label">Pickup Formatted Address</label></div>
+                <div class="col">
+                    <p id="pickupAddressSelected"></p>
+                </div>
+            </div>
+            <div class="row pb-2">
+                <div class="col col-4">
+                        <button id="importButton" class="btn btn-primary">Import</button>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+<script>
+    document.getElementById('viewResult').style.display = 'none';
+    document.getElementById('validateBtn').addEventListener('click', function () {
+        document.getElementById('viewResult').style.display = 'block';
+        var pickupStoreNo = document.getElementById('pickupStoreNo');
+        var pickupStoreName = document.getElementById('pickupStoreName');
+        var pickupLat = document.getElementById('pickupLat');
+        var pickupLon = document.getElementById('pickupLon');
+        var pickupAddress = document.getElementById('pickupAddress');
+
+        document.getElementById('pickupStoreNoSelected').textContent = pickupStoreNo.value;
+        document.getElementById('pickupStoreNameSelected').textContent = pickupStoreName.value;
+        document.getElementById('pickupLatSelected').textContent = pickupLat.value;
+        document.getElementById('pickupLonSelected').textContent = pickupLon.value;
+        document.getElementById('pickupAddressSelected').textContent = pickupAddress.value;
+
+    });
+
+
+        // document.getElementById('importButton').addEventListener('click', function () {
+        //     // Get form data
+        // var pickupStoreNo = document.getElementById('pickupStoreNoSelected').value;
+        // var pickupStoreName = document.getElementById('pickupStoreNameSelected').value;
+        // var pickupLat = document.getElementById('pickupLatSelected').value;
+        // var pickupLon = document.getElementById('pickupLonSelected').value;
+        // var pickupAddress = document.getElementById('pickupAddressSelected').value;
+
+        //     // Create JSON object
+        //     var jsonData = {
+        //         name: name,
+        //         age: age,
+        //         email: email
+        //     };
+
+        //     // Convert JSON object to string
+        //     var jsonString = JSON.stringify(jsonData, null, 2);
+
+        //     // Display JSON string
+        //     document.getElementById('jsonOutput').textContent = jsonString;
+        // });
+
+</script>
+
+<script>
+    document.getElementById('importButton').addEventListener('click', function () {
+        // Example JSON data
+
+        var pickupStoreNo = document.getElementById('pickupStoreNo');
+        var pickupStoreName = document.getElementById('pickupStoreName');
+        var pickupLat = document.getElementById('pickupLat');
+        var pickupLon = document.getElementById('pickupLon');
+        var pickupAddress = document.getElementById('pickupAddress');
+
+        var jsonData = {
+            pickupStoreNo: pickupStoreNo.value,
+            pickupStoreName: pickupStoreName.value,
+            pickupLat: pickupLat.value,
+            pickupLon: pickupLon.value,
+            pickupAddress: pickupAddress.value
+        };
+        debugger
+
+        // Convert JSON object to string
+        var jsonString = JSON.stringify(jsonData, null, 2);
+
+        // Create a Blob from the JSON string
+        var blob = new Blob([jsonString], { type: 'application/json' });
+
+        // Create a link element
+        var a = document.createElement('a');
+        var url = URL.createObjectURL(blob);
+        a.href = url;
+        a.download = 'data.json'; // Set the file name
+
+        // Append the link to the body and trigger a click
+        document.body.appendChild(a);
+        a.click();
+
+        // Clean up
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    });
+</script>
+
+
+
